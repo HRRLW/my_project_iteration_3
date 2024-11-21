@@ -29,3 +29,4 @@ Establish your own additional team policies around the following aspects:
 
 Yichen Duan;
 Zetao Huang;
+Yiyuan Qin.
