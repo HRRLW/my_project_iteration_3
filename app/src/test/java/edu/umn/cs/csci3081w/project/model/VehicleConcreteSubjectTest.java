@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 public class VehicleConcreteSubjectTest {
 
@@ -25,7 +27,7 @@ public class VehicleConcreteSubjectTest {
     PassengerFactory.DETERMINISTIC_NAMES_COUNT = 0;
     PassengerFactory.DETERMINISTIC_DESTINATION_COUNT = 0;
     RandomPassengerGenerator.DETERMINISTIC = true;
-    Vehicle.TESTING = true;
+    //Vehicle.TESTING = true;
     List<Stop> stopsIn = new ArrayList<Stop>();
     Stop stop1 = new Stop(0, "test stop 1", new Position(-93.243774, 44.972392));
     Stop stop2 = new Stop(1, "test stop 2", new Position(-93.235071, 44.973580));
@@ -97,16 +99,38 @@ public class VehicleConcreteSubjectTest {
    */
   @Test
   public void testNotifyObservers() {
-    VehicleConcreteSubject vehicleConcreteSubject =
-        new VehicleConcreteSubject(new WebServerSession());
-    vehicleConcreteSubject.attachObserver(testVehicle);
+    // 创建 Mock 的 WebServerSession
+    WebServerSession mockSession = Mockito.mock(WebServerSession.class);
+
+    // 创建 VehicleConcreteSubject 并传入 Mock Session
+    VehicleConcreteSubject vehicleSubject = new VehicleConcreteSubject(mockSession);
+
+    // 将 Mock 注入到测试车辆中
+    testVehicle.setVehicleSubject(vehicleSubject);
+
+    // 将测试车辆附加为观察者
+    vehicleSubject.attachObserver(testVehicle);
+
+    // 更新车辆状态
     testVehicle.update();
-    vehicleConcreteSubject.notifyObservers();
-    JsonObject testOutput = testVehicle.getTestOutput();
-    String command = testOutput.get("command").getAsString();
+
+    // 调用 notifyObservers（触发 provideInfo）
+    vehicleSubject.notifyObservers();
+
+    // 捕获发送的 JSON 数据
+    ArgumentCaptor<JsonObject> captor = ArgumentCaptor.forClass(JsonObject.class);
+    Mockito.verify(mockSession).sendJson(captor.capture());
+    JsonObject capturedData = captor.getValue();
+//    VehicleConcreteSubject vehicleConcreteSubject =
+//        new VehicleConcreteSubject(new WebServerSession());
+//    vehicleConcreteSubject.attachObserver(testVehicle);
+//    testVehicle.update();
+//    vehicleConcreteSubject.notifyObservers();
+//    JsonObject testOutput = testVehicle.getTestOutput();
+    String command = capturedData.get("command").getAsString();
     String expectedCommand = "observedVehicle";
     assertEquals(expectedCommand, command);
-    String observedText = testOutput.get("text").getAsString();
+    String observedText = capturedData.get("text").getAsString();
     String expectedText = "1" + System.lineSeparator()
         + "-----------------------------" + System.lineSeparator()
         + "* Type: " + System.lineSeparator()
