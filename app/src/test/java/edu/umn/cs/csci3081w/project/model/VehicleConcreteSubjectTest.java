@@ -99,34 +99,15 @@ public class VehicleConcreteSubjectTest {
    */
   @Test
   public void testNotifyObservers() {
-    // 创建 Mock 的 WebServerSession
     WebServerSession mockSession = Mockito.mock(WebServerSession.class);
-
-    // 创建 VehicleConcreteSubject 并传入 Mock Session
     VehicleConcreteSubject vehicleSubject = new VehicleConcreteSubject(mockSession);
-
-    // 将 Mock 注入到测试车辆中
     testVehicle.setVehicleSubject(vehicleSubject);
-
-    // 将测试车辆附加为观察者
     vehicleSubject.attachObserver(testVehicle);
-
-    // 更新车辆状态
     testVehicle.update();
-
-    // 调用 notifyObservers（触发 provideInfo）
     vehicleSubject.notifyObservers();
-
-    // 捕获发送的 JSON 数据
     ArgumentCaptor<JsonObject> captor = ArgumentCaptor.forClass(JsonObject.class);
     Mockito.verify(mockSession).sendJson(captor.capture());
     JsonObject capturedData = captor.getValue();
-//    VehicleConcreteSubject vehicleConcreteSubject =
-//        new VehicleConcreteSubject(new WebServerSession());
-//    vehicleConcreteSubject.attachObserver(testVehicle);
-//    testVehicle.update();
-//    vehicleConcreteSubject.notifyObservers();
-//    JsonObject testOutput = testVehicle.getTestOutput();
     String command = capturedData.get("command").getAsString();
     String expectedCommand = "observedVehicle";
     assertEquals(expectedCommand, command);

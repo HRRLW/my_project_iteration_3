@@ -295,9 +295,6 @@ public abstract class Vehicle implements VehicleObserver {
     return tripCompleted;
   }
 
-//  public JsonObject getTestOutput() {
-//    return testOutput;
-//  }
 
   public void setVehicleSubject(VehicleConcreteSubject vehicleConcreteSubject) {
     this.vehicleConcreteSubject = vehicleConcreteSubject;

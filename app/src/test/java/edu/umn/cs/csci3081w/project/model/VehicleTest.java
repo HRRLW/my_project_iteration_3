@@ -3,10 +3,9 @@ package edu.umn.cs.csci3081w.project.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonObject;
+import edu.umn.cs.csci3081w.project.webserver.WebServerSession;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.umn.cs.csci3081w.project.webserver.WebServerSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
