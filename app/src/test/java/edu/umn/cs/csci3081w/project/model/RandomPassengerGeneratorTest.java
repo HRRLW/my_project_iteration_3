@@ -66,6 +66,36 @@ public class RandomPassengerGeneratorTest {
 
   }
 
+  /**
+   * Test generatePassengers when while (probCount < probSize && stopCount < stopSize) is false.
+   */
+  @Test
+  public void testGeneratePassengersWhileConditionFalse() {
+    List<Stop> stops = new ArrayList<>();
+    stops.add(new Stop(0, "Stop 0", new Position(-93.0, 44.0)));
+    List<Double> probabilities = new ArrayList<>();
+    probabilities.add(0.15);
+    probabilities.add(0.25);
+    testRandomPassengerGenerator = new RandomPassengerGenerator(stops, probabilities);
+    int passengersGenerated = testRandomPassengerGenerator.generatePassengers();
+    assertEquals(0, passengersGenerated);
+  }
+
+
+  /**
+   * Test generatePassengers when if (RandomPassengerGenerator.DETERMINISTIC) is false.
+   */
+  @Test
+  public void testGeneratePassengersNonDeterministic() {
+    RandomPassengerGenerator.DETERMINISTIC = false;
+    List<Double> probabilities = new ArrayList<>();
+    probabilities.add(0.9);
+    testRandomPassengerGenerator = new RandomPassengerGenerator(
+        testRandomPassengerGenerator.getStops(), probabilities);
+    int passengersGenerated = testRandomPassengerGenerator.generatePassengers();
+    int firstStopPassengers = testRandomPassengerGenerator.getStops().get(0).getPassengers().size();
+    assertEquals(passengersGenerated, firstStopPassengers);
+  }
 
   /**
    * Clean up our variables after each test.

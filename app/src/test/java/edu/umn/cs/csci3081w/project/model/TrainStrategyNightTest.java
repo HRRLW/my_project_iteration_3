@@ -1,6 +1,7 @@
 package edu.umn.cs.csci3081w.project.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,5 +42,31 @@ public class TrainStrategyNightTest {
       strToCmpr = trainStrategyDay.getTypeOfVehicle(storageFacility);
       assertEquals(DieselTrain.DIESEL_TRAIN_VEHICLE, strToCmpr);
     }
+  }
+
+  /**
+   * Testing when there is no vehicle.
+   */
+  @Test
+  public void testGetTypeOfVehicleWithNoVehicle() {
+    StorageFacility storageFacility = new StorageFacility(0, 0, 0, 0);
+    TrainStrategyNight trainStrategyDay = new TrainStrategyNight();
+    String strToCmpr;
+    strToCmpr = trainStrategyDay.getTypeOfVehicle(storageFacility);
+    assertNull(strToCmpr);
+  }
+
+  /**
+   * Testing when there is no diesel train.
+   */
+  @Test
+  public void testGetTypeOfVehicleWithNoDieselTrain() {
+    StorageFacility storageFacility = new StorageFacility(0, 0, 1, 0);
+    TrainStrategyNight trainStrategyDay = new TrainStrategyNight();
+    String strToCmpr;
+    strToCmpr = trainStrategyDay.getTypeOfVehicle(storageFacility);
+    assertEquals(ElectricTrain.ELECTRIC_TRAIN_VEHICLE, strToCmpr);
+    strToCmpr = trainStrategyDay.getTypeOfVehicle(storageFacility);
+    assertNull(strToCmpr);
   }
 }

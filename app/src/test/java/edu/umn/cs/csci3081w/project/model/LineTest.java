@@ -1,6 +1,7 @@
 package edu.umn.cs.csci3081w.project.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
@@ -253,6 +254,28 @@ public class LineTest {
 
     assertEquals(true, testLine.isIssueExist());
 
+  }
+
+  /**
+   * Tests update when there is no issue.
+   */
+  @Test
+  public void testUpdateNoIssue() {
+    testLine = new Line(0, "testLineNoIssue", Line.BUS_LINE,
+        testLine.getOutboundRoute(), testLine.getInboundRoute(), null);
+    assertFalse(testLine.isIssueExist());
+    testLine.update();
+    assertFalse(testLine.isIssueExist());
+  }
+
+  /**
+   * Tests isIssueExist when there is no issue.
+   */
+  @Test
+  public void testIsIssueExistWithNoIssue() {
+    testLine = new Line(0, "testLineNoIssue", Line.BUS_LINE,
+        testLine.getOutboundRoute(), testLine.getInboundRoute(), null);
+    assertFalse(testLine.isIssueExist());
   }
 
   /**

@@ -121,4 +121,19 @@ public class VehicleConcreteSubjectTest {
     assertEquals(expectedText, observedText);
   }
 
+  /**
+   * Tests when trip is complete.
+   */
+  @Test
+  public void testNotifyObserversTripComplete() {
+    WebServerSession mockSession = Mockito.mock(WebServerSession.class);
+    VehicleConcreteSubject vehicleSubject = new VehicleConcreteSubject(mockSession);
+    VehicleObserver mockVehicleObserver = Mockito.mock(VehicleObserver.class);
+    Mockito.when(mockVehicleObserver.provideInfo()).thenReturn(true);
+    vehicleSubject.attachObserver(mockVehicleObserver);
+    vehicleSubject.notifyObservers();
+    assertEquals(0, vehicleSubject.getObservers().size());
+  }
+
+
 }

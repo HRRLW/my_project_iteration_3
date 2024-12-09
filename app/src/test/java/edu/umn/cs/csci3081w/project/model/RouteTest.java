@@ -156,6 +156,36 @@ public class RouteTest {
     }
   }
 
+  /**
+   * Tests report method when stopCounter != nextStopIndex.
+   */
+  @Test
+  public void testReportWhenNotNextStop() {
+    try {
+      final Charset charset = StandardCharsets.UTF_8;
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      PrintStream testStream = new PrintStream(outputStream, true, charset.name());
+      testRouteOut.nextStop();
+      testRouteOut.report(testStream);
+      outputStream.flush();
+      String data = new String(outputStream.toByteArray(), charset);
+      testStream.close();
+      outputStream.close();
+      int nextStopStartOccurrences =
+          data.split("\\+\\+\\+\\+Next Stop Info Start\\+\\+\\+\\+", -1).length - 1;
+      int nextStopEndOccurrences =
+          data.split("\\+\\+\\+\\+Next Stop Info End\\+\\+\\+\\+", -1).length - 1;
+      assertEquals(1, nextStopStartOccurrences);
+      assertEquals(1, nextStopEndOccurrences);
+      assert data.contains("test stop 1");
+      assert data.contains("test stop 2");
+      assert data.contains("test stop 3");
+    } catch (IOException ioe) {
+      fail();
+    }
+  }
+
+
 
   /**
    * Tests if we properly move through stops to end.
@@ -198,6 +228,18 @@ public class RouteTest {
     testRouteIn.nextStop();
     assertEquals("test stop 2", testRouteIn.prevStop().getName());
   }
+
+  /**
+   * Test prevStop when nextStopIndex == stops.size().
+   */
+  @Test
+  public void testPrevStopAtEnd() {
+    while (!testRouteOut.isAtEnd()) {
+      testRouteOut.nextStop();
+    }
+    assertEquals("test stop 3", testRouteOut.prevStop().getName());
+  }
+
 
   /**
    * Tests if we can move forward through stops.

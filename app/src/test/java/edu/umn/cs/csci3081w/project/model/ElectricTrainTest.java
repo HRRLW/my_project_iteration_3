@@ -110,6 +110,48 @@ public class ElectricTrainTest {
   }
 
   /**
+   * Test if print passenger works properly.
+   */
+  @Test
+  public void testReportWithPassengers() {
+    testTrain.move();
+    Passenger pass1 = new Passenger(2, "Bob");
+    testTrain.loadPassenger(pass1);
+    try {
+      final Charset charset = StandardCharsets.UTF_8;
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      PrintStream testStream = new PrintStream(outputStream, true, charset.name());
+      testTrain.report(testStream);
+      outputStream.flush();
+      String data = new String(outputStream.toByteArray(), charset);
+      testStream.close();
+      outputStream.close();
+      String strToCompare =
+          "####Electric Train Info Start####" + System.lineSeparator()
+              + "ID: 1" + System.lineSeparator()
+              + "Name: testRouteOut1" + System.lineSeparator()
+              + "Speed: 1.0" + System.lineSeparator()
+              + "Capacity: 3" + System.lineSeparator()
+              + "Position: 44.97358,-93.235071" + System.lineSeparator()
+              + "Distance to next stop: 0.843774422231134" + System.lineSeparator()
+              + "****Passengers Info Start****" + System.lineSeparator()
+              + "Num of passengers: 1" + System.lineSeparator()
+              + "####Passenger Info Start####" + System.lineSeparator()
+              + "Name: Bob" + System.lineSeparator()
+              + "Destination: 2" + System.lineSeparator()
+              + "Wait at stop: 0" + System.lineSeparator()
+              + "Time on vehicle: 1" + System.lineSeparator()
+              + "####Passenger Info End####" + System.lineSeparator()
+              + "****Passengers Info End****" + System.lineSeparator()
+              + "####Electric Train Info End####" + System.lineSeparator();
+      assertEquals(strToCompare, data);
+    } catch (IOException ioe) {
+      fail();
+    }
+  }
+
+
+  /**
    * Test the co2 calculation for a train.
    */
   @Test
