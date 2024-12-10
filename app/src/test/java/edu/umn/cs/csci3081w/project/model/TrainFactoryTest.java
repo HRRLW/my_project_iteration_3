@@ -34,6 +34,18 @@ public class TrainFactoryTest {
   }
 
   /**
+   * Testing the constructor when if (time >= 8 && time < 18) is false.
+   */
+  @Test
+  public void testConstructorNightStrategyWhenTimeIsNight() {
+    TrainFactory nightTrainFactoryEarly = new TrainFactory(storageFacility, new Counter(), 7);
+    TrainFactory nightTrainFactoryLate = new TrainFactory(storageFacility, new Counter(), 19);
+
+    assertTrue(nightTrainFactoryEarly.getGenerationStrategy() instanceof TrainStrategyNight);
+    assertTrue(nightTrainFactoryLate.getGenerationStrategy() instanceof TrainStrategyNight);
+  }
+
+  /**
    * Testing if generated vehicle is working according to strategy.
    */
   @Test
@@ -115,5 +127,34 @@ public class TrainFactoryTest {
     assertEquals(4, trainFactory.getStorageFacility().getElectricTrainsNum());
     assertEquals(3, trainFactory.getStorageFacility().getDieselTrainsNum());
 
+  }
+
+  /**
+   * Testing return of DieselTrain.
+   */
+  @Test
+  public void testReturnVehicleDieselTrain() {
+    List<Stop> stops = new ArrayList<>();
+    stops.add(new Stop(0, "Stop 1", new Position(0, 0)));
+    stops.add(new Stop(1, "Stop 2", new Position(1, 1)));
+    List<Double> distances = new ArrayList<>();
+    distances.add(1.0);
+    distances.add(1.5);
+    List<Double> probabilities = new ArrayList<>();
+    probabilities.add(0.5);
+    probabilities.add(0.5);
+
+    PassengerGenerator generator = new RandomPassengerGenerator(stops, probabilities);
+    Route routeIn = new Route(0, "RouteIn", stops, distances, generator);
+    Route routeOut = new Route(1, "RouteOut", stops, distances, generator);
+
+    DieselTrain dieselTrain = new DieselTrain(2, new Line(10007, "testLine", "TRAIN",
+        routeOut, routeIn, new Issue()), DieselTrain.CAPACITY, DieselTrain.SPEED);
+
+    assertEquals(3, trainFactory.getStorageFacility().getElectricTrainsNum());
+    assertEquals(3, trainFactory.getStorageFacility().getDieselTrainsNum());
+    trainFactory.returnVehicle(dieselTrain);
+    assertEquals(3, trainFactory.getStorageFacility().getElectricTrainsNum());
+    assertEquals(4, trainFactory.getStorageFacility().getDieselTrainsNum());
   }
 }

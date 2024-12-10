@@ -37,7 +37,7 @@ public class BusFactoryTest {
    * Testing the constructor when if (time >= 8 && time < 18) is false.
    */
   @Test
-  public void testConstructorNightStrategyWhenTimeIsOutsideDayRange() {
+  public void testConstructorNightStrategyWhenTimeIsNight() {
     BusFactory nightBusFactoryEarly = new BusFactory(storageFacility, new Counter(), 7);
     BusFactory nightBusFactoryLate = new BusFactory(storageFacility, new Counter(), 19);
 
