@@ -34,6 +34,19 @@ public class BusFactoryTest {
   }
 
   /**
+   * Testing the constructor when if (time >= 8 && time < 18) is false.
+   */
+  @Test
+  public void testConstructorNightStrategyWhenTimeIsOutsideDayRange() {
+    BusFactory nightBusFactoryEarly = new BusFactory(storageFacility, new Counter(), 7);
+    BusFactory nightBusFactoryLate = new BusFactory(storageFacility, new Counter(), 19);
+
+    assertTrue(nightBusFactoryEarly.getGenerationStrategy() instanceof BusStrategyNight);
+    assertTrue(nightBusFactoryLate.getGenerationStrategy() instanceof BusStrategyNight);
+  }
+
+
+  /**
    * Testing if generated vehicle is working according to strategy.
    */
   @Test
