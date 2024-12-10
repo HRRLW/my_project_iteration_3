@@ -18,4 +18,11 @@ public class Position {
     return latitude;
   }
 
+  @Override
+  public String toString() {
+    return "Position{" +
+            "longitude=" + longitude +
+            ", latitude=" + latitude +
+            '}';
+  }
 }

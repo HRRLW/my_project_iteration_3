@@ -129,6 +129,7 @@ function setupSocket() {
             if (data.command == "updateVehicles") {
 
                 vehicles = [];
+                console.log("这是后端发送的数据：", data.vehicles)
 
                 for (let i = 0; i < data.vehicles.length; i++) {
                     id = data.vehicles[i].id;

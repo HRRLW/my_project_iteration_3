@@ -2,11 +2,8 @@ package edu.umn.cs.csci3081w.project.webserver;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import edu.umn.cs.csci3081w.project.model.DieselTrain;
-import edu.umn.cs.csci3081w.project.model.ElectricTrain;
-import edu.umn.cs.csci3081w.project.model.LargeBus;
-import edu.umn.cs.csci3081w.project.model.SmallBus;
-import edu.umn.cs.csci3081w.project.model.Vehicle;
+import edu.umn.cs.csci3081w.project.model.*;
+
 import java.util.List;
 
 public class GetVehiclesCommand extends SimulatorCommand {
@@ -52,10 +49,17 @@ public class GetVehiclesCommand extends SimulatorCommand {
       positionJsonObject.addProperty("latitude", currVehicle.getPosition().getLatitude());
       s.add("position", positionJsonObject);
       JsonObject colorJsonObject = new JsonObject();
-      colorJsonObject.addProperty("r", 255);
-      colorJsonObject.addProperty("g", 255);
-      colorJsonObject.addProperty("b", 255);
-      colorJsonObject.addProperty("alpha", 255);
+      if(currVehicle instanceof VehicleColor vehicleColor && vehicleColor.getColor() != null) {
+        colorJsonObject.addProperty("r", vehicleColor.getColor()[0]);
+        colorJsonObject.addProperty("g", vehicleColor.getColor()[1]);
+        colorJsonObject.addProperty("b", vehicleColor.getColor()[2]);
+        colorJsonObject.addProperty("alpha", vehicleColor.getColor()[3]);
+      } else {
+        colorJsonObject.addProperty("r", 255);
+        colorJsonObject.addProperty("g", 255);
+        colorJsonObject.addProperty("b", 255);
+        colorJsonObject.addProperty("alpha", 255);
+      }
       s.add("color", colorJsonObject);
       vehiclesArray.add(s);
     }

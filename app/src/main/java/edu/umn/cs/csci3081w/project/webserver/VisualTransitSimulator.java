@@ -1,15 +1,7 @@
 package edu.umn.cs.csci3081w.project.webserver;
 
-import edu.umn.cs.csci3081w.project.model.Bus;
-import edu.umn.cs.csci3081w.project.model.BusFactory;
-import edu.umn.cs.csci3081w.project.model.Counter;
-import edu.umn.cs.csci3081w.project.model.Line;
-import edu.umn.cs.csci3081w.project.model.StorageFacility;
-import edu.umn.cs.csci3081w.project.model.Train;
-import edu.umn.cs.csci3081w.project.model.TrainFactory;
-import edu.umn.cs.csci3081w.project.model.Vehicle;
-import edu.umn.cs.csci3081w.project.model.VehicleConcreteSubject;
-import edu.umn.cs.csci3081w.project.model.VehicleFactory;
+import edu.umn.cs.csci3081w.project.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +99,13 @@ public class VisualTransitSimulator {
           + simulationTimeElapsed + "~~~~");
       // generate vehicles
       for (int i = 0; i < timeSinceLastVehicle.size(); i++) {
+        if(i >= lines.size()) {
+          continue;
+        }
         Line line = lines.get(i);
+        if(line.getType() == null) {
+          continue;
+        }
         if (timeSinceLastVehicle.get(i) <= 0) {
           Vehicle generatedVehicle = null;
           if (line.getType().equals(Line.BUS_LINE) && !line.isIssueExist()) {
@@ -118,6 +116,8 @@ public class VisualTransitSimulator {
           if (line.getType().equals(Line.TRAIN_LINE) || line.getType().equals(Line.BUS_LINE)) {
             if (generatedVehicle != null && !line.isIssueExist()) {
               activeVehicles.add(generatedVehicle);
+              line.getOutboundRoute().addVehicle(generatedVehicle);
+              line.getInboundRoute().addVehicle(generatedVehicle);
             }
             timeSinceLastVehicle.set(i, vehicleStartTimings.get(i));
             timeSinceLastVehicle.set(i, timeSinceLastVehicle.get(i) - 1);
@@ -132,8 +132,37 @@ public class VisualTransitSimulator {
       for (int i = activeVehicles.size() - 1; i >= 0; i--) {
         Vehicle currVehicle = activeVehicles.get(i);
         currVehicle.update();
+
+        // Check if there is a problem with the route to which the vehicle belongs
+        Line vehicleLine = findLineByVehicle(currVehicle);
+        if (vehicleLine != null) {
+          boolean hasIssue = vehicleLine.isIssueExist();
+          if(hasIssue) {
+            // change the color
+            for (Vehicle vehicle : vehicleLine.getInboundRoute().getVehicles()) {
+              if(vehicle instanceof VehicleColor vehicleColor) {
+                int[] color = vehicleColor.getColor();
+                color[3] = 1;
+                vehicleColor.setColor(color);
+              }
+            }
+            for (Vehicle vehicle : vehicleLine.getOutboundRoute().getVehicles()) {
+              if(vehicle instanceof VehicleColor vehicleColor) {
+                int[] color = vehicleColor.getColor();
+                color[3] = 155;
+                vehicleColor.setColor(color);
+              }
+            }
+          }
+        }
+
         if (currVehicle.isTripComplete()) {
           Vehicle completedTripVehicle = activeVehicles.remove(i);
+          Line line = findLineByVehicle(completedTripVehicle);
+          if (line != null) {
+            line.getOutboundRoute().removeVehicle(completedTripVehicle);
+            line.getInboundRoute().removeVehicle(completedTripVehicle);
+          }
           completedTripVehicles.add(completedTripVehicle);
           if (completedTripVehicle instanceof Bus) {
             busFactory.returnVehicle(completedTripVehicle);
@@ -156,6 +185,22 @@ public class VisualTransitSimulator {
       }
       vehicleConcreteSubject.notifyObservers();
     }
+  }
+
+  /**
+   * find the route to which the vehicle belongs。
+   *
+   * @param vehicle the vehicle to look for
+   * @return The route to which the vehicle belongs, and returns if not found null
+   */
+  private Line findLineByVehicle(Vehicle vehicle) {
+    for (Line line : lines) {
+      if (line.getOutboundRoute().getVehicles().contains(vehicle) ||
+              line.getInboundRoute().getVehicles().contains(vehicle)) {
+        return line;
+      }
+    }
+    return null;
   }
 
   public List<Line> getLines() {

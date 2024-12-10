@@ -43,11 +43,20 @@ public class GetRoutesCommand extends SimulatorCommand {
       stopStruct.addProperty("id", route.getStops().get(j).getId());
       stopStruct.addProperty("numPeople", route.getStops().get(j).getPassengers().size());
       JsonObject jsonObj = new JsonObject();
-      jsonObj.addProperty("longitude",
-          route.getStops().get(j).getPosition().getLongitude());
-      jsonObj.addProperty("latitude",
-          route.getStops().get(j).getPosition().getLatitude());
-      stopStruct.add("position", jsonObj);
+      if(route.getStops().get(j).getPosition() != null) {
+        jsonObj.addProperty("longitude",
+                route.getStops().get(j).getPosition().getLongitude());
+        jsonObj.addProperty("latitude",
+                route.getStops().get(j).getPosition().getLatitude());
+        stopStruct.add("position", jsonObj);
+      } else {
+        jsonObj.addProperty("longitude",
+                0);
+        jsonObj.addProperty("latitude",
+                0);
+        stopStruct.add("position", jsonObj);
+      }
+
       stopArray.add(stopStruct);
     }
     r.add("stops", stopArray);

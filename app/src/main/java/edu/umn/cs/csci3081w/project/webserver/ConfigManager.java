@@ -143,4 +143,9 @@ public class ConfigManager {
   public StorageFacility getStorageFacility() {
     return storageFacility;
   }
+
+  public List<Route> getRoutes() {
+    return routes;
+  }
+
 }

@@ -45,10 +45,10 @@ public abstract class Vehicle implements VehicleObserver {
     this.line = line;
     this.distanceRemaining = 0;
     this.nextStop = line.getOutboundRoute().getNextStop();
-    setName(line.getOutboundRoute().getName() + id);
-    setPosition(new Position(nextStop.getPosition().getLongitude(),
-        nextStop.getPosition().getLatitude()));
-    carbonEmissionHistory = new ArrayList<Integer>();
+    this.name = line.getOutboundRoute().getName() + id;
+    this.position = new Position(nextStop.getPosition().getLongitude(),
+            nextStop.getPosition().getLatitude());
+    carbonEmissionHistory = new ArrayList<>();
   }
 
   public abstract void report(PrintStream out);
